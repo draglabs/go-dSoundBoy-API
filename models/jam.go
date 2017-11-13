@@ -4,37 +4,30 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Jam struct, models our Jam collection
+// Jam struct, is the struct on which
+// a Jam is modeled into
 type Jam struct {
-	ID     bson.ObjectId `json:"id" bson:"_id"`
-	Pin    string        `json:"pin"    bson:"pin"`
-	Status bool          `json:"status" bson:"status"`
-	Name   string        `json:"name"   bson:"name"`
-
-	Coordinates   []float64    `json:"coordinates"     bson:"coordinates"`
-	Collaborators []Creator    `json:"collaborators"   bson:"collaborators"`
-	Recordings    []Recordings `json:"recordings"      bson:"recordings"`
-	Location      string       `json:"location"        bson:"location"`
-	Creator       Creator      `json:"creator"         bson:"creator"`
-	StartTime     string       `json:"start_time"      bson:"start_time"`
-	EndTime       string       `json:"end_time"        bson:"end_time"`
-	StatusID      string       `json:"status_id"       bson:"status_id"`
-	Notes         string       `json:"notes"           bson:"notes"`
+	ID            bson.ObjectId `json:"id"             bson:"_id"`
+	Pin           string        `json:"pin"             bson:"pin"`
+	IsCurrent     bool          `json:"is_current"      bson:"is_current"`
+	Name          string        `json:"name"            bson:"name"`
+	UserID        string        `json:"user_id"         bson:"user_id"`
+	Coordinates   []float64     `json:"coordinates"     bson:"coordinates"`
+	Collaborators []User        `json:"collaborators"   bson:"collaborators"`
+	Recordings    []Recordings  `json:"recordings"      bson:"recordings"`
+	Location      string        `json:"location"        bson:"location"`
+	StartTime     string        `json:"start_time"      bson:"start_time"`
+	EndTime       string        `json:"end_time"        bson:"end_time"`
+	Notes         string        `json:"notes"           bson:"notes"`
 }
 
+// Recordings struct, is the struct on which
+// the recordings for a jam are modeled into
 type Recordings struct {
-	User      Creator `json:"user" bson:"user"`
-	FileName  string  `json:"file_name" bson:"file_name"`
-	JamID     string  `json:"jam_id" bson:"jam_id"`
-	StartTime string  `json:"start_time" bson:"start_time"`
-	EndTime   string  `json:"end_time" bson:"end_time"`
-	Notes     string  `json:"notes" bson:"notes"`
-	S3url     string  `json:"s3url" bson:"s3url"`
-}
-
-//Creator struct
-type Creator struct {
-	ID    string `json:"id" bson:"id"`
-	Name  string `json:"name" bson:"name"`
-	Email string `json:"email" bson:"email"`
+	FileName  string `json:"file_name"   bson:"file_name"`
+	JamID     string `json:"jam_id"      bson:"jam_id"`
+	StartTime string `json:"start_time"  bson:"start_time"`
+	EndTime   string `json:"end_time"    bson:"end_time"`
+	Notes     string `json:"notes"       bson:"notes"`
+	S3url     string `json:"s3url"       bson:"s3url"`
 }
