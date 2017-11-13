@@ -25,3 +25,9 @@ func AddAllSubRoutes() {
 func index(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	json.NewEncoder(w).Encode(types.ResponseMesssage{"homepage route"})
 }
+func setContentTypeJSON(next httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Content-Type", "application/json")
+		next(w, r, p)
+	}
+}

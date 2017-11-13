@@ -3,6 +3,7 @@ package utils
 import (
 	"dsound/types"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -14,6 +15,7 @@ func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 	if err == nil {
 		return p, nil
 	}
+	fmt.Println(err)
 	return p, err
 }
 

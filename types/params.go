@@ -3,9 +3,9 @@ package types
 type JamRequestParams struct {
 	Name     string  `json:"name"`
 	Location string  `json"location"`
-	Lat      float64 `json:"latitude"`
-	Lng      float64 `json:"longitude"`
-	Notes    string  `json:notes,omitemty"`
+	Lat      float64 `json:"lat,omitempty"`
+	Lng      float64 `json:"lng,omitempty"`
+	Notes    string  `json:notes,omitempty"`
 }
 
 type UpdateJamRequestParams struct {

@@ -25,14 +25,25 @@ func NewJamRouter() JamRouter {
 	return JamRouter{}
 }
 func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
-	r.POST(jamNewR, j.new)
-	r.POST(joinR, j.join)
+	r.GET(jamR, setContentTypeJSON(j.jam))
+	r.POST(jamNewR, setContentTypeJSON(j.new))
+	r.POST(joinR, setContentTypeJSON(j.join))
+}
+func (j *JamRouter) jam(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	r.ParseForm()
+	id := r.FormValue("id")
+	jm, err := controllers.Jam.FindId(id)
+	if err == nil {
+		json.NewEncoder(w).Encode(jm)
+		return
+	}
+
 }
 func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pm, err := utils.ParseJam(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(types.ResponseMesssage{"One or more params are missing"})
+		json.NewEncoder(w).Encode(types.ResponseMesssage{M: "One or more params are missing"})
 		return
 	}
 	jam, err := controllers.Jam.Create(pm)
@@ -42,8 +53,9 @@ func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		return
 	}
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(types.ResponseMesssage{"Unable to create Jam"})
+	json.NewEncoder(w).Encode(types.ResponseMesssage{M: "Unable to create Jam"})
 }
+
 func (j *JamRouter) join(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	controllers.Jam.Join()
 }

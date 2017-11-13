@@ -1,11 +1,15 @@
 package models
 
+import (
+	"gopkg.in/mgo.v2/bson"
+)
+
 // Jam struct, models our Jam collection
 type Jam struct {
-	ID     string `json:"id" bson:"_id"`
-	Pin    string `json:"pin"    bson:"pin"`
-	Status bool   `json:"status" bson:"status"`
-	Name   string `json:"name"   bson:"name"`
+	ID     bson.ObjectId `json:"id" bson:"_id"`
+	Pin    string        `json:"pin"    bson:"pin"`
+	Status bool          `json:"status" bson:"status"`
+	Name   string        `json:"name"   bson:"name"`
 
 	Coordinates   []float64    `json:"coordinates"     bson:"coordinates"`
 	Collaborators []Creator    `json:"collaborators"   bson:"collaborators"`

@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"crypto/rand"
 	"dsound/db"
 	"dsound/models"
 	"dsound/types"
+	"io"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -18,12 +20,13 @@ func newJam() jam {
 var Jam = newJam()
 
 func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
-	id := bson.NewObjectId().String()
+	id := bson.NewObjectId()
 
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
 	jam := models.Jam{
+		Pin:         encodeToString(4),
 		ID:          id,
 		Name:        p.Name,
 		Location:    p.Location,
@@ -58,9 +61,21 @@ func (j jam) FindId(id string) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	err := c.FindId(id).One(&jm)
+	err := c.FindId(bson.ObjectIdHex(id)).One(&jm)
 	if err == nil {
 		return jm, nil
 	}
 	return jm, err
+}
+func encodeToString(max int) string {
+	var table = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
+	b := make([]byte, max)
+	n, err := io.ReadAtLeast(rand.Reader, b, max)
+	if n != max {
+		panic(err)
+	}
+	for i := 0; i < len(b); i++ {
+		b[i] = table[int(b[i])%len(table)]
+	}
+	return string(b)
 }
