@@ -77,7 +77,7 @@ func (u user) UpdateCurrentJam(useID, jamID string) error {
 	jc := db.JamCollection()
 	err = jc.FindId(bson.ObjectIdHex(jamID)).One(&currentJam)
 
-	err = c.Update(user, currentJam)
+	err = c.Update(bson.M{"user_id": useID}, currentJam)
 	if err != nil {
 		log.Fatal(err)
 	}

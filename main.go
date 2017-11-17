@@ -3,9 +3,10 @@ package main
 import (
 	"dsound/routes"
 	"net/http"
+	"os"
 )
 
 func main() {
 	routes.AddAllSubRoutes()
-	http.ListenAndServe(":8080", routes.Router)
+	http.ListenAndServe(os.Getenv("PORT"), routes.Router)
 }

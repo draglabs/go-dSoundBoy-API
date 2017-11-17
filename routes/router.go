@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	APIV = "/api/v1.0/"
+	APIV = "/api/v2.0/"
 )
 
 // Router is the main router
