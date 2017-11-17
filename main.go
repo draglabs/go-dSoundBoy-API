@@ -8,5 +8,5 @@ import (
 
 func main() {
 	routes.AddAllSubRoutes()
-	log.Fatal(http.ListenAndServe(":80", routes.Router))
+	log.Fatal(http.ListenAndServe(":8080", routes.Router))
 }
