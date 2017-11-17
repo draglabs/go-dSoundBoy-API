@@ -16,10 +16,10 @@ type JamRequestParams struct {
 // on what the params from updating a jam
 // are modeled into
 type UpdateJamRequestParams struct {
-	ID       string `json:"id"`
-	Name     string `json:"name,omitempty"`
-	Location string `json:"location,omitempty"`
-	Notes    string `json:"notes,omitempty"`
+	ID       string `json:"id" bson:"-"`
+	Name     string `json:"name,omitempty" bson:"name,omitempty"`
+	Location string `json:"location,omitempty" bson:"location,omitempty"`
+	Notes    string `json:"notes,omitempty" bson:"notes,omitempty"`
 }
 
 //JoinJamRequestParams struct, is the struct

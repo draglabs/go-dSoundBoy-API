@@ -52,6 +52,3 @@ func (d DataStore) RecordingsCollection() *mgo.Collection {
 	c := d.session.DB(DB).C(recordings)
 	return c
 }
-func (d DataStore) StatusCollection() {
-
-}

@@ -29,9 +29,9 @@ func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
 	defer db.Close()
 	c := db.JamCollection()
 	jam := models.Jam{
+		ID:          bson.NewObjectId(),
 		UserID:      p.UserID,
 		Pin:         utils.GeneratePin(4),
-		ID:          bson.NewObjectId(),
 		Name:        p.Name,
 		Location:    p.Location,
 		Coordinates: []float64{p.Lat, p.Lng},
@@ -53,6 +53,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 	}
 	go vendor.CleanupAfterUpload(p.TempFileURL)
 	recording := models.Recordings{
+		ID:        bson.NewObjectId(),
 		FileName:  p.FileName,
 		JamID:     p.JamID,
 		StartTime: p.StartTime,
@@ -105,13 +106,20 @@ func findByPin(pin string) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	err := c.Find(bson.M{"pin": pin}).One(&jm)
+	err := c.Find(bson.M{"pin": pin}).One(&jm) //MARK:TODO should create an index for this val
 	if err == nil {
 		return jm, nil
 	}
 	return jm, err
 }
 
+// Recordings func, will fetch all the recordings for a jam
+func Recordings(id string) ([]models.Recordings, error) {
+	var recordings []models.Recordings
+	db := db.NewDB()
+	err := db.RecordingsCollection().Find(bson.M{"jam_id": id}).All(&recordings)
+	return recordings, err
+}
 func updateCollabators(id, userID string) {
 	var jm models.Jam
 	db := db.NewDB()
@@ -137,5 +145,10 @@ func updateRecordings(jamID string, r models.Recordings) {
 		er := c.Update(jm, recordings)
 		println(er)
 	}
-
+	saveRecordings(jamID, r)
+}
+func saveRecordings(jamID string, r models.Recordings) error {
+	db := db.NewDB()
+	defer db.Close()
+	return db.RecordingsCollection().Insert(r)
 }

@@ -15,10 +15,12 @@ type JamRouter struct {
 }
 
 const (
-	jamR    = APIV + "jam"
-	jamNewR = jamR + "/new"
-	joinR   = jamR + "/join"
-	upload  = jamR + "/upload"
+	jamR        = APIV + "jam"
+	jamByID     = jamR + "/:id"
+	recordingsR = jamR + "/recording/:id"
+	jamNewR     = jamR + "/new"
+	joinR       = jamR + "/join"
+	upload      = jamR + "/upload"
 )
 
 //NewJamRouter func, gives us a new JamRouter
@@ -26,16 +28,18 @@ func NewJamRouter() JamRouter {
 	return JamRouter{}
 }
 
+// addToMainROuter func, will add all the jam routes
+// to he main router
 func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
-	r.GET(jamR, setContentTypeJSON(j.jam))
+	r.GET(jamByID, setContentTypeJSON(j.jam))
 	r.POST(jamNewR, setContentTypeJSON(j.new))
 	r.POST(joinR, setContentTypeJSON(j.join))
 	r.POST(upload, j.upload)
 }
 
+// jam func, fetches a jam by id
 func (j *JamRouter) jam(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	r.ParseForm()
-	id := r.FormValue("id")
+	id := p.ByName("id")
 	jm, err := controllers.Jam.FindById(id)
 	if err == nil {
 		json.NewEncoder(w).Encode(jm)
@@ -44,6 +48,8 @@ func (j *JamRouter) jam(w http.ResponseWriter, r *http.Request, p httprouter.Par
 
 }
 
+// new func, will give us a new jam regarless of the user having an
+// active jam, if the user has an active jam it will be replaced by this one
 func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pm, err := utils.ParseJam(r)
 	if err != nil {
@@ -61,6 +67,8 @@ func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Par
 	json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to create Jam"})
 }
 
+// upload func, takes care of the uplaoding, and currently uploads the file to
+// s3 bucket.
 func (j *JamRouter) upload(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, err := utils.ParseUpload(r)
 	if err != nil {
@@ -73,6 +81,7 @@ func (j *JamRouter) upload(w http.ResponseWriter, r *http.Request, p httprouter.
 	}
 }
 
+// join func, join a user into a jam.
 func (j *JamRouter) join(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, err := utils.ParseJoinJam(r)
 	if err != nil {
@@ -84,6 +93,13 @@ func (j *JamRouter) join(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 	}
 }
 
+// recordings func, will fetch all the recordings for a given jam id.
 func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
+	id := p.ByName("id")
+	recordings, err := controllers.Recordings(id)
+	if err != nil {
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "No recordings for this jam"})
+		return
+	}
+	json.NewEncoder(w).Encode(recordings)
 }
