@@ -2,10 +2,11 @@ package main
 
 import (
 	"dsound/routes"
+	"log"
 	"net/http"
 )
 
 func main() {
 	routes.AddAllSubRoutes()
-	http.ListenAndServe(":80", routes.Router)
+	log.Fatal(http.ListenAndServe(":80", routes.Router))
 }
