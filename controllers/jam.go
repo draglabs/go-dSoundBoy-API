@@ -69,6 +69,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 
 	if jm, err := findByPin(p.Pin); err == nil {
+		j.UpdateActiveJam(p.UserID)
 		go User.UpdateCurrentJam(p.UserID, jm)
 		go updateCollabators(jm.ID, p.UserID)
 		return types.JamResponse{
@@ -81,6 +82,8 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 	}
 	return types.JamResponse{}, errors.New("unable to join")
 }
+
+// Update, updates the jam fields
 func (j jam) Update(p types.UpdateJamRequestParams) error {
 	db := db.NewDB()
 	defer db.Close()
@@ -91,6 +94,9 @@ func (j jam) Update(p types.UpdateJamRequestParams) error {
 	}
 	return nil
 }
+
+// UpdateActiveJam updates the current jam from
+// being active to inactive.
 func (j jam) UpdateActiveJam(userID string) {
 	var activeJam models.Jam
 	db := db.NewDB()
@@ -132,20 +138,25 @@ func Recordings(id string) ([]models.Recordings, error) {
 	err := db.RecordingsCollection().Find(bson.M{"jam_id": id}).All(&recordings)
 	return recordings, err
 }
-func updateCollabators(id, userID string) {
+func updateCollabators(jamID, userID string) {
 	var jm models.Jam
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
 	usr, _ := User.FindByID(userID)
-	if err := c.FindId(id).One(&jm); err == nil {
+	if err := c.FindId(jamID).One(&jm); err == nil {
 		collabs := jm.Collaborators
 		collabs = append(collabs, usr)
-		er := c.Update(jm, collabs)
+		er := c.Update(bson.M{"_id": jamID}, bson.M{"$set": bson.M{"collaborators": collabs}})
 		fmt.Println(er)
 	}
 
 }
+
+//UpdateRecordings, updates the recordings of a jam
+// by appending the new recodings to the recording array,
+// NOTE: `I might change this since appeding is a bit expesive
+//	I would probably add the recordings to its own collection`
 func updateRecordings(jamID string, r models.Recordings) {
 	var jm models.Jam
 	db := db.NewDB()
@@ -154,7 +165,7 @@ func updateRecordings(jamID string, r models.Recordings) {
 	if err := c.FindId(jamID).One(&jm); err == nil {
 		recordings := jm.Recordings
 		recordings = append(recordings, r)
-		er := c.Update(jm, recordings)
+		er := c.UpdateId(jm.ID, bson.M{"$set": bson.M{"recordings": recordings}})
 		fmt.Println(er)
 	}
 	saveRecordings(jamID, r)
