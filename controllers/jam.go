@@ -25,7 +25,7 @@ var Jam = newJam()
 // and  updates the current jam
 // on the user
 func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
-
+	j.UpdateActiveJam(p.UserID)
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
@@ -91,7 +91,16 @@ func (j jam) Update(p types.UpdateJamRequestParams) error {
 	}
 	return nil
 }
+func (j jam) UpdateActiveJam(userID string) {
+	var activeJam models.Jam
+	db := db.NewDB()
+	defer db.Close()
+	err := db.JamCollection().Find(bson.M{"user_id": userID, "is_current": true}).One(&activeJam)
+	if err == nil {
+		err = db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false}})
+	}
 
+}
 func (j jam) FindById(id string) (models.Jam, error) {
 	var jm models.Jam
 	db := db.NewDB()

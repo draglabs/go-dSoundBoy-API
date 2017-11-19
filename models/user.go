@@ -4,7 +4,7 @@ package models
 // that an user is modeled into
 type User struct {
 	ID         string `json:"id" bson:"_id"`
-	FirstName  string `json:"name" bson:"first_name"`
+	FirstName  string `json:"first_name" bson:"first_name"`
 	LastName   string `json:"last_name" bson:"last_name"`
 	FBEmail    string `json:"fb_email" bson:"fb_email"`
 	FBID       string `json:"fb_id" bson:"fb_id"`

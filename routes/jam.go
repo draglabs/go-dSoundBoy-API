@@ -77,7 +77,7 @@ func (j *JamRouter) upload(w http.ResponseWriter, r *http.Request, p httprouter.
 	}
 	err = controllers.Jam.Upload(para)
 	if err == nil {
-
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "uploaded succesfuly"})
 	}
 }
 

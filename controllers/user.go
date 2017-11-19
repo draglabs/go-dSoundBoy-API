@@ -5,7 +5,6 @@ import (
 	"dsound/models"
 	"dsound/types"
 	"dsound/vendor"
-	"fmt"
 	"log"
 
 	"gopkg.in/mgo.v2/bson"
@@ -71,22 +70,15 @@ func (u user) FindByFB(fbID string) (models.User, error) {
 // UpdateCurrentJam func, will update the current jam
 // for the user, if it cant update it, it will panic
 // since this operation is key to the whole flow.
-func (u user) UpdateCurrentJam(useID string, jam models.Jam) error {
+func (u user) UpdateCurrentJam(userID string, jam models.Jam) error {
 	var user models.User
-	var activeJam models.Jam
+
 	db := db.NewDB()
 	defer db.Close()
 	c := db.UserCollection()
-	errFindJam := db.JamCollection().Find(bson.M{"user_id": useID, "is_current": true}).One(&activeJam)
-	if errFindJam == nil {
-		activeJam.IsCurrent = false
-		er := db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false}})
-		fmt.Println(er)
-	}
-	fmt.Println(errFindJam)
-	c.FindId(useID).One(&User)
+	c.FindId(userID).One(&User)
 	user.CurrentJam = &jam
-	err := c.Update(bson.M{"_id": useID}, bson.M{"$set": bson.M{"current_jam": jam}})
+	err := c.Update(bson.M{"_id": userID}, bson.M{"$set": bson.M{"current_jam": jam}})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,13 +86,13 @@ func (u user) UpdateCurrentJam(useID string, jam models.Jam) error {
 	return err
 }
 
-func (u user) Activity(useID string) ([]types.JamResponse, error) {
+func (u user) Activity(userID string) ([]types.JamResponse, error) {
 	var response []types.JamResponse
 	var jams []models.Jam
 	db := db.NewDB()
 	defer db.Close()
 	jc := db.JamCollection()
-	err := jc.Find(bson.M{"user_id": useID}).All(&jams)
+	err := jc.Find(bson.M{"user_id": userID}).All(&jams)
 	if err != nil {
 		return response, err
 	}
@@ -118,15 +110,11 @@ func (u user) Activity(useID string) ([]types.JamResponse, error) {
 }
 
 func (u user) ActiveJam(useID string) (models.Jam, error) {
-
 	var jam models.Jam
 	db := db.NewDB()
 	defer db.Close()
 	jc := db.JamCollection()
 	err := jc.Find(bson.M{"user_id": useID, "current": true}).One(&jam)
-	if err != nil {
-		return jam, err
-	}
+	return jam, err
 
-	return jam, nil
 }
