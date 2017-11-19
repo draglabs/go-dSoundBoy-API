@@ -38,10 +38,10 @@ type UploadJamParams struct {
 	EndTime     string
 }
 
-//UserRequestParams struct, is the struct
+//CreateUserParams struct, is the struct
 // on what the params from registering a user
 // are modeled into
-type UserRequestParams struct {
+type CreateUserParams struct {
 	FBID        string `json:"facebook_id"`
 	AccessToken string `json:"access_token"`
 }

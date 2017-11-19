@@ -98,7 +98,7 @@ func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprou
 	id := p.ByName("id")
 	recordings, err := controllers.Recordings(id)
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "No recordings for this jam"})
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "No recordings for this jam " + id})
 		return
 	}
 	json.NewEncoder(w).Encode(recordings)

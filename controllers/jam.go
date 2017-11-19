@@ -7,6 +7,7 @@ import (
 	"dsound/utils"
 	"dsound/vendor"
 	"errors"
+	"fmt"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -29,7 +30,8 @@ func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
 	defer db.Close()
 	c := db.JamCollection()
 	jam := models.Jam{
-		ID:          bson.NewObjectId(),
+		IsCurrent:   true,
+		ID:          bson.NewObjectId().Hex(),
 		UserID:      p.UserID,
 		Pin:         utils.GeneratePin(4),
 		Name:        p.Name,
@@ -38,7 +40,8 @@ func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
 	}
 	err := c.Insert(jam)
 	if err == nil {
-		go User.UpdateCurrentJam(p.UserID, jam.ID.String())
+		go User.UpdateCurrentJam(p.UserID, jam)
+
 		return jam, nil
 	}
 
@@ -53,7 +56,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 	}
 	go vendor.CleanupAfterUpload(p.TempFileURL)
 	recording := models.Recordings{
-		ID:        bson.NewObjectId(),
+		ID:        bson.NewObjectId().Hex(),
 		FileName:  p.FileName,
 		JamID:     p.JamID,
 		StartTime: p.StartTime,
@@ -66,8 +69,8 @@ func (j jam) Upload(p types.UploadJamParams) error {
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 
 	if jm, err := findByPin(p.Pin); err == nil {
-		go User.UpdateCurrentJam(p.UserID, jm.ID.String())
-		go updateCollabators(jm.ID.String(), p.UserID)
+		go User.UpdateCurrentJam(p.UserID, jm)
+		go updateCollabators(jm.ID, p.UserID)
 		return types.JamResponse{
 			ID:        jm.ID,
 			Name:      jm.Name,
@@ -94,7 +97,7 @@ func (j jam) FindById(id string) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	err := c.FindId(bson.ObjectIdHex(id)).One(&jm)
+	err := c.FindId(id).One(&jm)
 	if err == nil {
 		return jm, nil
 	}
@@ -106,7 +109,7 @@ func findByPin(pin string) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	err := c.Find(bson.M{"pin": pin}).One(&jm) //MARK:TODO should create an index for this val
+	err := c.Find(bson.M{"pin": pin}).One(&jm)
 	if err == nil {
 		return jm, nil
 	}
@@ -126,11 +129,11 @@ func updateCollabators(id, userID string) {
 	defer db.Close()
 	c := db.JamCollection()
 	usr, _ := User.FindByID(userID)
-	if err := c.FindId(bson.ObjectIdHex(id)).One(&jm); err == nil {
+	if err := c.FindId(id).One(&jm); err == nil {
 		collabs := jm.Collaborators
 		collabs = append(collabs, usr)
 		er := c.Update(jm, collabs)
-		println(er)
+		fmt.Println(er)
 	}
 
 }
@@ -139,11 +142,11 @@ func updateRecordings(jamID string, r models.Recordings) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	if err := c.FindId(bson.ObjectIdHex(jamID)).One(&jm); err == nil {
+	if err := c.FindId(jamID).One(&jm); err == nil {
 		recordings := jm.Recordings
 		recordings = append(recordings, r)
 		er := c.Update(jm, recordings)
-		println(er)
+		fmt.Println(er)
 	}
 	saveRecordings(jamID, r)
 }

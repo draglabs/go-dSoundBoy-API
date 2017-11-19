@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -16,6 +17,7 @@ func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 	var p types.JamRequestParams
 	userId := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
+	defer r.Body.Close()
 	if err == nil {
 		p.UserID = userId
 		return p, nil
@@ -24,32 +26,28 @@ func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 	return p, err
 }
 
-// ParseParams Parses the request parameters
-// by passing the type you want to parse into
-func ParseParams(r *http.Request, to interface{}) (interface{}, error) {
-	p := to
-	err := json.NewDecoder(r.Body).Decode(&p)
-	if err == nil {
-		return p, nil
-	}
+// ParseCreateUser func, parses the incoming
+// params from create a new user request
+func ParseCreateUser(r *http.Request) (types.CreateUserParams, error) {
+	var p types.CreateUserParams
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	err = json.Unmarshal(b, &p)
+
 	return p, err
 }
 
-// ParseUser func, parses the incoming
-// params from create a new user request
-func ParseUser(r *http.Request) (types.UserRequestParams, error) {
-	var p types.UserRequestParams
-	err := json.NewDecoder(r.Body).Decode(&p)
-	if err == nil {
-		return p, nil
-	}
-	return types.UserRequestParams{}, err
-}
+func ParseUserID(r *http.Request) string {
+	id := r.Header.Get("user_id")
+	return id
 
+}
 func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 	var p types.JoinJamRequestParams
 	userId := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
+	defer r.Body.Close()
 	if err == nil {
 		p.UserID = userId
 		return p, nil

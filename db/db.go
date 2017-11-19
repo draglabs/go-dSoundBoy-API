@@ -1,29 +1,24 @@
 package db
 
 import mgo "gopkg.in/mgo.v2"
-import "fmt"
-
-func ensureIndices() {
-
-}
 
 const (
-	DB         = "dsound"
+	db         = "dsound"
 	jam        = "jams"
 	user       = "users"
 	recordings = "recordings"
 )
 
+// NewDB func, give us a new mgo session
 func NewDB() DataStore {
 
 	info := mgo.DialInfo{
 		Addrs:    []string{"54.183.100.139:27017"},
-		Database: DB,
+		Database: db,
 		Username: "soundBoy",
 		Password: "soundBoy",
 	}
-	s, err := mgo.DialWithInfo(&info)
-	fmt.Println(err)
+	s, _ := mgo.DialWithInfo(&info)
 
 	s.SetMode(mgo.Monotonic, true)
 	return DataStore{
@@ -39,16 +34,16 @@ type DataStore struct {
 }
 
 func (d DataStore) JamCollection() *mgo.Collection {
-	c := d.session.DB(DB).C(jam)
+	c := d.session.DB(db).C(jam)
 	return c
 }
 
 func (d DataStore) UserCollection() *mgo.Collection {
-	c := d.session.DB(DB).C(user)
+	c := d.session.DB(db).C(user)
 	return c
 }
 
 func (d DataStore) RecordingsCollection() *mgo.Collection {
-	c := d.session.DB(DB).C(recordings)
+	c := d.session.DB(db).C(recordings)
 	return c
 }
