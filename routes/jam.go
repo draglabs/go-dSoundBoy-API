@@ -21,6 +21,7 @@ const (
 	jamNewR     = jamR + "/new"
 	joinR       = jamR + "/join"
 	upload      = jamR + "/upload"
+	details     = jamR + "/details/:id"
 )
 
 //NewJamRouter func, gives us a new JamRouter
@@ -32,6 +33,7 @@ func NewJamRouter() JamRouter {
 // to he main router
 func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
 	r.GET(jamByID, setContentTypeJSON(j.jam))
+	r.GET(details, setContentTypeJSON(j.details))
 	r.POST(jamNewR, setContentTypeJSON(j.new))
 	r.POST(joinR, setContentTypeJSON(j.join))
 	r.POST(upload, j.upload)
@@ -40,7 +42,7 @@ func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
 // jam func, fetches a jam by id
 func (j *JamRouter) jam(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	id := p.ByName("id")
-	jm, err := controllers.Jam.FindById(id)
+	jm, err := controllers.Jam.FindByID(id)
 	if err == nil {
 		json.NewEncoder(w).Encode(jm)
 		return
@@ -91,6 +93,16 @@ func (j *JamRouter) join(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 	if jam, err := controllers.Jam.Join(para); err == nil {
 		json.NewEncoder(w).Encode(jam)
 	}
+}
+
+func (j *JamRouter) details(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	jam, err := controllers.Jam.Details(p.ByName("id"))
+	if err == nil {
+		json.NewEncoder(w).Encode(jam)
+		return
+	}
+	json.NewEncoder(w).Encode(types.ResponseMessage{M: "Something when wrong, Error: " + err.Error()})
+
 }
 
 // recordings func, will fetch all the recordings for a given jam id.

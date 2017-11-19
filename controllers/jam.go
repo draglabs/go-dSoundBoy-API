@@ -8,6 +8,7 @@ import (
 	"dsound/vendor"
 	"errors"
 	"fmt"
+	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -33,6 +34,7 @@ func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
 		IsCurrent:   true,
 		ID:          bson.NewObjectId().Hex(),
 		UserID:      p.UserID,
+		StartTime:   time.Now().String(),
 		Pin:         utils.GeneratePin(4),
 		Name:        p.Name,
 		Location:    p.Location,
@@ -63,7 +65,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 		EndTime:   p.EndTime,
 		S3url:     s3URL,
 	}
-	go updateRecordings(p.JamID, recording)
+	go createRecording(p.JamID, recording)
 	return nil
 }
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
@@ -103,11 +105,13 @@ func (j jam) UpdateActiveJam(userID string) {
 	defer db.Close()
 	err := db.JamCollection().Find(bson.M{"user_id": userID, "is_current": true}).One(&activeJam)
 	if err == nil {
-		err = db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false}})
+		err = db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false, "end_time": time.Now().String()}})
 	}
 
 }
-func (j jam) FindById(id string) (models.Jam, error) {
+
+// FindById finds a jam by id
+func (j jam) FindByID(id string) (models.Jam, error) {
 	var jm models.Jam
 	db := db.NewDB()
 	defer db.Close()
@@ -132,12 +136,13 @@ func findByPin(pin string) (models.Jam, error) {
 }
 
 // Recordings func, will fetch all the recordings for a jam
-func Recordings(id string) ([]models.Recordings, error) {
+func Recordings(jamID string) ([]models.Recordings, error) {
 	var recordings []models.Recordings
 	db := db.NewDB()
-	err := db.RecordingsCollection().Find(bson.M{"jam_id": id}).All(&recordings)
+	err := db.RecordingsCollection().Find(bson.M{"jam_id": jamID}).All(&recordings)
 	return recordings, err
 }
+
 func updateCollabators(jamID, userID string) {
 	var jm models.Jam
 	db := db.NewDB()
@@ -152,26 +157,14 @@ func updateCollabators(jamID, userID string) {
 	}
 
 }
-
-//UpdateRecordings, updates the recordings of a jam
-// by appending the new recodings to the recording array,
-// NOTE: `I might change this since appeding is a bit expesive
-//	I would probably add the recordings to its own collection`
-func updateRecordings(jamID string, r models.Recordings) {
-	var jm models.Jam
-	db := db.NewDB()
-	defer db.Close()
-	c := db.JamCollection()
-	if err := c.FindId(jamID).One(&jm); err == nil {
-		recordings := jm.Recordings
-		recordings = append(recordings, r)
-		er := c.UpdateId(jm.ID, bson.M{"$set": bson.M{"recordings": recordings}})
-		fmt.Println(er)
-	}
-	saveRecordings(jamID, r)
-}
-func saveRecordings(jamID string, r models.Recordings) error {
+func createRecording(jamID string, r models.Recordings) error {
 	db := db.NewDB()
 	defer db.Close()
 	return db.RecordingsCollection().Insert(r)
+}
+func (j jam) Details(id string) (models.Jam, error) {
+	recordings, err := Recordings(id)
+	jam, err := j.FindByID(id)
+	jam.Recordings = recordings
+	return jam, err
 }
