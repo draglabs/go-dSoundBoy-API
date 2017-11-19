@@ -31,7 +31,7 @@ func NewJamRouter() JamRouter {
 // addToMainROuter func, will add all the jam routes
 // to he main router
 func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
-	//r.GET(jamByID, setContentTypeJSON(j.jam))
+	r.GET(recordingsR, setContentTypeJSON(j.recordings))
 	r.GET(details, setContentTypeJSON(j.details))
 	r.POST(jamNewR, setContentTypeJSON(j.new))
 	r.POST(joinR, setContentTypeJSON(j.join))
