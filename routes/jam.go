@@ -38,17 +38,6 @@ func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
 	r.POST(upload, j.upload)
 }
 
-// jam func, fetches a jam by id
-func (j *JamRouter) jam(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id := p.ByName("id")
-	jm, err := controllers.Jam.FindByID(id)
-	if err == nil {
-		json.NewEncoder(w).Encode(jm)
-		return
-	}
-
-}
-
 // new func, will give us a new jam regarless of the user having an
 // active jam, if the user has an active jam it will be replaced by this one
 func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

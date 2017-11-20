@@ -26,6 +26,7 @@ func NewUserRouter() UserRouter {
 func (ur *UserRouter) AddUserRoutes(r *httprouter.Router) {
 	r.POST(register, setContentTypeJSON(ur.register))
 	r.GET(activeJam, setContentTypeJSON(ur.activeJam))
+	r.GET(activity, setContentTypeJSON(ur.activity))
 }
 func (ur *UserRouter) register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pa, err := utils.ParseCreateUser(r)
@@ -45,4 +46,12 @@ func (ur *UserRouter) activeJam(w http.ResponseWriter, r *http.Request, p httpro
 		return
 	}
 	json.NewEncoder(w).Encode(jam)
+}
+func (ur *UserRouter) activity(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	jams, err := controllers.User.Activity(p.ByName("id"))
+	if err != nil {
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to find user activity"})
+		return
+	}
+	json.NewEncoder(w).Encode(jams)
 }
