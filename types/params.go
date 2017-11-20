@@ -45,3 +45,6 @@ type CreateUserParams struct {
 	FBID        string `json:"facebook_id"`
 	AccessToken string `json:"access_token"`
 }
+type UpdateUserParams struct {
+	Email string `json:"email"`
+}

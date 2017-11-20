@@ -118,3 +118,13 @@ func (u user) ActiveJam(useID string) (models.Jam, error) {
 	return jam, err
 
 }
+func (u user) Update(userID string) (models.User, error) {
+	var user models.User
+	store := db.NewDB()
+	defer store.Close()
+	err := store.UserCollection().FindId(userID).One(&user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
