@@ -72,7 +72,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	infile, _, err := r.FormFile("filename")
 
 	if err != nil {
-
+		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
 	userID := r.Header.Get("user_id")
@@ -91,16 +91,16 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	}
 	outfile, err := os.Create(".uploads/" + userID)
 	if err != nil {
-
+		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
 
 	_, err = io.Copy(outfile, infile)
 	if err != nil {
-
+		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
-
+	fmt.Println("params from upload", p)
 	return p, err
 }
 
