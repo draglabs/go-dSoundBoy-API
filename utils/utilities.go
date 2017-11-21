@@ -75,7 +75,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
-	userID := r.Header.Get("user_id")
+	userID := r.FormValue("user_id") // replaced for now., whould come on the header.
 	jamID := r.FormValue("id")
 	startTime := r.FormValue("start_time")
 	endTime := r.FormValue("end_time")
