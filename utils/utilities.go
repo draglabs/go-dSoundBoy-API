@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-)
+)							
 
 // ParseJam func, parses the incoming
 // params from the create a new jam request
@@ -64,7 +64,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		return types.UploadJamParams{}, err
 	}
 	userID := r.Header.Get("user_id")
-	jamID := r.FormValue("jam_id")
+	jamID := r.FormValue("id")
 	startTime := r.FormValue("start_time")
 	endTime := r.FormValue("end_time")
 	fileName := r.FormValue("filename")
