@@ -69,7 +69,7 @@ func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 
 func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 
-	infile, _, err := r.FormFile("filename")
+	infile, _, err := r.FormFile("audioFile")
 
 	if err != nil {
 		fmt.Println(err)
@@ -79,7 +79,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	jamID := r.FormValue("id")
 	startTime := r.FormValue("start_time")
 	endTime := r.FormValue("end_time")
-	fileName := r.FormValue("audioFile")
+	fileName := r.FormValue("name")
 
 	p := types.UploadJamParams{
 		UserID:      userID,
