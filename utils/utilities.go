@@ -79,7 +79,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	jamID := r.FormValue("id")
 	startTime := r.FormValue("start_time")
 	endTime := r.FormValue("end_time")
-	fileName := r.FormValue("file")
+	fileName := r.FormValue("audioFile")
 
 	p := types.UploadJamParams{
 		UserID:      userID,
