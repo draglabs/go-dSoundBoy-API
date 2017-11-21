@@ -9,17 +9,29 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-)							
+)
 
 // ParseJam func, parses the incoming
 // params from the create a new jam request
 func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 	var p types.JamRequestParams
-	userId := r.Header.Get("user_id")
+	userID := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
 	defer r.Body.Close()
 	if err == nil {
-		p.UserID = userId
+		p.UserID = userID
+		return p, nil
+	}
+	fmt.Println(err)
+	return p, err
+}
+func ParseUpdate(r *http.Request) (types.UpdateJamRequestParams, error) {
+	var p types.UpdateJamRequestParams
+	userID := r.Header.Get("user_id")
+	err := json.NewDecoder(r.Body).Decode(&p)
+	defer r.Body.Close()
+	if err == nil {
+		p.ID = userID
 		return p, nil
 	}
 	fmt.Println(err)

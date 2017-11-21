@@ -104,5 +104,9 @@ func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprou
 	json.NewEncoder(w).Encode(recordings)
 }
 func (j *JamRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	controllers.Jam.Update(utils.Par)
+	para, _ := utils.ParseUpdate(r)
+	err := controllers.Jam.Update(para)
+	if err == nil {
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Updated"})
+	}
 }
