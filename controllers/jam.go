@@ -161,7 +161,11 @@ func updateCollabators(jamID, userID string) {
 func createRecording(jamID string, r models.Recordings) error {
 	db := db.NewDB()
 	defer db.Close()
-	return db.RecordingsCollection().Insert(r)
+	err := db.RecordingsCollection().Insert(r)
+	if err != nil {
+		fmt.Println("error creating recording ", err)
+	}
+	return err
 }
 func (j jam) Details(id string) (models.Jam, error) {
 	recordings, err := Recordings(id)
