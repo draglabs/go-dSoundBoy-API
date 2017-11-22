@@ -102,6 +102,7 @@ func (u user) Activity(userID string) ([]types.JamResponse, error) {
 			ID:            jm.ID,
 			Name:          jm.Name,
 			StartTime:     jm.StartTime,
+			EndtTime:      jm.EndTime,
 			Location:      jm.Location,
 			Notes:         jm.Notes,
 			Collaborators: count,
