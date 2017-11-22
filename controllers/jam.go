@@ -51,14 +51,15 @@ func (j jam) Create(p types.JamRequestParams) (models.Jam, error) {
 }
 
 func (j jam) Upload(p types.UploadJamParams) error {
-	s3URL, err := vendor.UploadToS3(p.TempFileURL, p.UserID)
+	id := bson.NewObjectId().Hex()
+	s3URL, err := vendor.UploadToS3(p.TempFileURL, p.UserID, id)
 	if err != nil {
 		go vendor.CleanupAfterUpload(p.TempFileURL)
 		return err
 	}
 	go vendor.CleanupAfterUpload(p.TempFileURL)
 	recording := models.Recordings{
-		ID:        bson.NewObjectId().Hex(),
+		ID:        id,
 		FileName:  p.FileName,
 		JamID:     p.JamID,
 		StartTime: p.StartTime,

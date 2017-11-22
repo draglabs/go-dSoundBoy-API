@@ -15,13 +15,13 @@ const (
 
 // UploadToS3 func, uploads a recording to s3
 // once ge a response from the server then
-func UploadToS3(filename string, key string) (string, error) {
+func UploadToS3(filepath string, userID, key string) (string, error) {
 
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(s3region)})
 	// Create an uploader with the session and default options
 	uploader := s3manager.NewUploader(sess)
 
-	f, err := os.Open(filename)
+	f, err := os.Open(filepath)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -30,7 +30,7 @@ func UploadToS3(filename string, key string) (string, error) {
 	// Upload the file to S3.
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String("dsound-boy"),
-		Key:    aws.String(key + ".caf"),
+		Key:    aws.String(userID + "/" + key + ".caf"),
 		Body:   f,
 		ACL:    aws.String("public-read"),
 	})
