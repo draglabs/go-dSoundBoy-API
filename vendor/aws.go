@@ -29,7 +29,7 @@ func UploadToS3(filename string, key string) (string, error) {
 
 	// Upload the file to S3.
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("draglabs-voice-recorder/" + filename),
+		Bucket: aws.String("dsound-boy/" + filename),
 		Key:    aws.String(key + ".caf"),
 		Body:   f,
 		ACL:    aws.String("public-read"),
