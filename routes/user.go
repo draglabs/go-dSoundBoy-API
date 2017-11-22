@@ -5,7 +5,6 @@ import (
 	"dsound/types"
 	"dsound/utils"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -53,12 +52,11 @@ func (ur *UserRouter) activeJam(w http.ResponseWriter, r *http.Request, p httpro
 func (ur *UserRouter) activity(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	jams, err := controllers.User.Activity(utils.ParseUserID(r))
-	fmt.Println("user activity", jams)
 	if err != nil {
 		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to find user activity"})
 		return
 	}
-	fmt.Println("acitivty /n")
+
 	json.NewEncoder(w).Encode(jams)
 }
 

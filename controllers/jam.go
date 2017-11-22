@@ -60,6 +60,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 	go vendor.CleanupAfterUpload(p.TempFileURL)
 	recording := models.Recordings{
 		ID:        id,
+		UserID:    p.UserID,
 		FileName:  p.FileName, // not in use, not sent from client
 		JamID:     p.JamID,
 		StartTime: p.StartTime,
