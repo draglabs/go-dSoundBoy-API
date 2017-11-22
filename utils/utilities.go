@@ -75,21 +75,18 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
-	userID := r.FormValue("user_id") // replaced for now., whould come on the header.
+	userID := r.FormValue("user_id") // replaced for now., should come on the header.
 	jamID := r.FormValue("id")
 	startTime := r.FormValue("start_time")
 	endTime := r.FormValue("end_time")
-	fileName := r.FormValue("name")
 
 	p := types.UploadJamParams{
 		UserID:      userID,
-		FileName:    fileName,
 		JamID:       jamID,
 		StartTime:   startTime,
 		EndTime:     endTime,
 		TempFileURL: ".uploads/" + jamID,
 	}
-	fmt.Println("userid", jamID)
 	outfile, err := os.Create(".uploads/" + jamID)
 	if err != nil {
 		fmt.Println(err)
@@ -101,7 +98,6 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		fmt.Println(err)
 		return types.UploadJamParams{}, err
 	}
-	fmt.Println("params from upload", p)
 	return p, err
 }
 

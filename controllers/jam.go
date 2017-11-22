@@ -60,13 +60,13 @@ func (j jam) Upload(p types.UploadJamParams) error {
 	go vendor.CleanupAfterUpload(p.TempFileURL)
 	recording := models.Recordings{
 		ID:        id,
-		FileName:  p.FileName,
+		FileName:  p.FileName, // not in use, not sent from client
 		JamID:     p.JamID,
 		StartTime: p.StartTime,
 		EndTime:   p.EndTime,
 		S3url:     s3URL,
 	}
-	go createRecording(p.JamID, recording)
+	createRecording(recording)
 	return nil
 }
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
@@ -140,6 +140,7 @@ func findByPin(pin string) (models.Jam, error) {
 func Recordings(jamID string) ([]models.Recordings, error) {
 	var recordings []models.Recordings
 	db := db.NewDB()
+	defer db.Close()
 	err := db.RecordingsCollection().Find(bson.M{"jam_id": jamID}).All(&recordings)
 	return recordings, err
 }
@@ -158,13 +159,14 @@ func updateCollabators(jamID, userID string) {
 	}
 
 }
-func createRecording(jamID string, r models.Recordings) error {
+func createRecording(r models.Recordings) error {
 	db := db.NewDB()
 	defer db.Close()
 	err := db.RecordingsCollection().Insert(r)
 	if err != nil {
 		fmt.Println("error creating recording ", err)
 	}
+
 	return err
 }
 func (j jam) Details(id string) (models.Jam, error) {
