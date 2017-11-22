@@ -97,12 +97,14 @@ func (u user) Activity(userID string) ([]types.JamResponse, error) {
 		return response, err
 	}
 	for _, jm := range jams {
+		count := len(jm.Collaborators)
 		resp := types.JamResponse{
-			ID:        jm.ID,
-			Name:      jm.Name,
-			StartTime: jm.StartTime,
-			Location:  jm.Location,
-			Notes:     jm.Notes,
+			ID:            jm.ID,
+			Name:          jm.Name,
+			StartTime:     jm.StartTime,
+			Location:      jm.Location,
+			Notes:         jm.Notes,
+			Collaborators: count,
 		}
 		response = append(response, resp)
 	}
