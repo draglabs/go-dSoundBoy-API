@@ -58,7 +58,7 @@ func (ur *UserRouter) activity(w http.ResponseWriter, r *http.Request, p httprou
 		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to find user activity"})
 		return
 	}
-
+	fmt.Println("acitivty /n")
 	json.NewEncoder(w).Encode(jams)
 }
 
