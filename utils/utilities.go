@@ -89,7 +89,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		EndTime:     endTime,
 		TempFileURL: ".uploads/" + jamID,
 	}
-	fmt.Println("jamid ", jamID)
+	fmt.Println("userid", jamID)
 	outfile, err := os.Create(".uploads/" + jamID)
 	if err != nil {
 		fmt.Println(err)
