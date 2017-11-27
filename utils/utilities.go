@@ -29,7 +29,7 @@ func ParseUpdate(r *http.Request) (types.UpdateJamRequestParams, error) {
 	var p types.UpdateJamRequestParams
 	userID := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
-	fmt.Println("update id:", p.ID)
+
 	defer r.Body.Close()
 	if err == nil {
 		p.ID = userID
