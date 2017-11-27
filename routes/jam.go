@@ -109,6 +109,7 @@ func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprou
 func (j *JamRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, err := utils.ParseUpdate(r)
 	fmt.Println("error parsing update", err)
+	fmt.Println(para.ID)
 	jam, err := controllers.Jam.Update(para)
 	fmt.Println(err)
 	if err == nil {
