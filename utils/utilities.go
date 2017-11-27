@@ -62,9 +62,10 @@ func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 	defer r.Body.Close()
 	if err == nil {
 		p.UserID = userId
+		fmt.Println("User id :", p.UserID)
 		return p, nil
 	}
-	fmt.Println("User id :", p.UserID)
+
 	return types.JoinJamRequestParams{}, err
 }
 
