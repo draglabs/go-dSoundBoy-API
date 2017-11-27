@@ -57,11 +57,11 @@ func ParseUserID(r *http.Request) string {
 }
 func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 	var p types.JoinJamRequestParams
-	userId := r.Header.Get("user_id")
+	//userId := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
 	defer r.Body.Close()
 	if err == nil {
-		p.UserID = userId
+		//	p.UserID = userId
 		fmt.Println("User id :", p.UserID)
 		return p, nil
 	}
