@@ -48,7 +48,7 @@ func (u user) FindByID(id string) (models.User, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.UserCollection()
-	err := c.FindId(id).One(&user)
+	err := c.Find(bson.M{"_id": id}).One(&user)
 	if err == nil {
 		return user, nil
 	}

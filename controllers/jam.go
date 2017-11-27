@@ -163,7 +163,7 @@ func updateCollabators(jamID, userID string) {
 	defer db.Close()
 	c := db.JamCollection()
 	usr, _ := User.FindByID(userID)
-	if err := c.FindId(jamID).One(&jm); err == nil {
+	if err := c.Find(bson.M{"_id": jamID}).One(&jm); err == nil {
 		collabs := jm.Collaborators
 		collabs = append(collabs, usr)
 		er := c.Update(bson.M{"_id": jamID}, bson.M{"$set": bson.M{"collaborators": collabs}})
