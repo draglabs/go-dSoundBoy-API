@@ -71,13 +71,11 @@ func (u user) FindByFB(fbID string) (models.User, error) {
 // for the user, if it cant update it, it will panic
 // since this operation is key to the whole flow.
 func (u user) UpdateCurrentJam(userID string, jam models.Jam) error {
-	var user models.User
 
 	db := db.NewDB()
 	defer db.Close()
 	c := db.UserCollection()
-	c.FindId(userID).One(&User)
-	user.CurrentJam = &jam
+
 	err := c.Update(bson.M{"_id": userID}, bson.M{"$set": bson.M{"current_jam": jam}})
 	if err != nil {
 		log.Fatal(err)
