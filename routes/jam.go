@@ -5,6 +5,7 @@ import (
 	"dsound/types"
 	"dsound/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -108,6 +109,7 @@ func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprou
 func (j *JamRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, _ := utils.ParseUpdate(r)
 	jam, err := controllers.Jam.Update(para)
+	fmt.Println(err)
 	if err == nil {
 		json.NewEncoder(w).Encode(jam)
 	}
