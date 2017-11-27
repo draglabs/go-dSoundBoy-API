@@ -93,10 +93,8 @@ func (j jam) Update(p types.UpdateJamRequestParams) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	c := db.JamCollection()
-	err := c.Find(bson.M{"_id": p.ID}).One(&jam)
-	fmt.Println(err)
 	fmt.Println(jam.Name)
-	//err := c.Update(bson.M{"_id": p.ID}, bson.M{"$set": bson.M{"name": p.Name, "location": p.Location, "notes": p.Notes}})
+	err := c.Update(bson.M{"_id": p.ID}, bson.M{"$set": bson.M{"name": p.Name, "location": p.Location, "notes": p.Notes}})
 	if err != nil {
 		fmt.Println("updating", err)
 		return jam, err
