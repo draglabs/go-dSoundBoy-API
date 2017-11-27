@@ -27,12 +27,11 @@ func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 }
 func ParseUpdate(r *http.Request) (types.UpdateJamRequestParams, error) {
 	var p types.UpdateJamRequestParams
-	userID := r.Header.Get("user_id")
+
 	err := json.NewDecoder(r.Body).Decode(&p)
 
 	defer r.Body.Close()
 	if err == nil {
-		p.ID = userID
 		return p, nil
 	}
 	fmt.Println(err)
