@@ -88,7 +88,7 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 }
 
 // Update, updates the jam fields
-func (j jam) Update(p types.UpdateJamRequestParams) (models.Jam, error) {
+func (j jam) Update(p types.UpdateJamRequestParams) (types.JamResponse, error) {
 	var jam models.Jam
 	db := db.NewDB()
 	defer db.Close()
@@ -97,11 +97,17 @@ func (j jam) Update(p types.UpdateJamRequestParams) (models.Jam, error) {
 	err := c.Update(bson.M{"_id": p.ID}, bson.M{"$set": bson.M{"name": p.Name, "location": p.Location, "notes": p.Notes}})
 	if err != nil {
 		fmt.Println("updating", err)
-		return jam, err
+		return types.JamResponse{}, err
 	}
 	err = c.Find(bson.M{"_id": p.ID}).One(&jam)
 	fmt.Println("fetching after update", err)
-	return jam, err
+	return types.JamResponse{
+		ID:        jam.ID,
+		Name:      jam.Name,
+		StartTime: jam.StartTime,
+		Location:  jam.Location,
+		Notes:     jam.Notes,
+	}, err
 }
 
 // UpdateActiveJam updates the current jam from
