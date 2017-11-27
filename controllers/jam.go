@@ -95,9 +95,11 @@ func (j jam) Update(p types.UpdateJamRequestParams) (models.Jam, error) {
 	c := db.JamCollection()
 	err := c.Update(bson.M{"_id": p.ID}, bson.M{"$set": bson.M{"name": p.Name, "location": p.Location, "notes": p.Notes}})
 	if err != nil {
+		fmt.Println("updating", err)
 		return jam, err
 	}
 	err = c.Find(bson.M{"_id": p.ID}).One(&jam)
+	fmt.Println("fetching after update", err)
 	return jam, err
 }
 
