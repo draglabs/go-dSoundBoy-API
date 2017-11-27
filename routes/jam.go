@@ -21,6 +21,7 @@ const (
 	joinR       = jamR + "/join"
 	upload      = jamR + "/upload"
 	details     = jamR + "/details/:id"
+	updateJam   = jamR + "/update"
 )
 
 //NewJamRouter func, gives us a new JamRouter
@@ -36,6 +37,7 @@ func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
 	r.POST(jamNewR, setContentTypeJSON(j.new))
 	r.POST(joinR, setContentTypeJSON(j.join))
 	r.POST(upload, j.upload)
+	r.POST(updateJam, setContentTypeJSON(j.update))
 }
 
 // new func, will give us a new jam regarless of the user having an
@@ -105,8 +107,8 @@ func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprou
 }
 func (j *JamRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, _ := utils.ParseUpdate(r)
-	err := controllers.Jam.Update(para)
+	jam, err := controllers.Jam.Update(para)
 	if err == nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Updated"})
+		json.NewEncoder(w).Encode(jam)
 	}
 }
