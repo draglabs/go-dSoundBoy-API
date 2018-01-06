@@ -15,6 +15,7 @@ type Jam struct {
 	StartTime     string       `json:"start_time"      bson:"start_time"`
 	EndTime       string       `json:"end_time"        bson:"end_time"`
 	Notes         string       `json:"notes"           bson:"notes"`
+	Link          string       `json:"link" bson:"link"`
 }
 
 // Recordings struct, is the struct on which

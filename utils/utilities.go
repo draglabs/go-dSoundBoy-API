@@ -25,6 +25,8 @@ func ParseJam(r *http.Request) (types.JamRequestParams, error) {
 	fmt.Println(err)
 	return p, err
 }
+
+// ParseUpdate func
 func ParseUpdate(r *http.Request) (types.UpdateJamRequestParams, error) {
 	var p types.UpdateJamRequestParams
 
@@ -50,18 +52,21 @@ func ParseCreateUser(r *http.Request) (types.CreateUserParams, error) {
 	return p, err
 }
 
+// ParseUserID func
 func ParseUserID(r *http.Request) string {
 	id := r.Header.Get("user_id")
 	return id
 
 }
+
+// ParseJoinJam func
 func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 	var p types.JoinJamRequestParams
 	//userId := r.Header.Get("user_id")
 	err := json.NewDecoder(r.Body).Decode(&p)
 	defer r.Body.Close()
 	if err == nil {
-		//	p.UserID = userId
+		// p.UserID = userId
 		fmt.Println("User id :", p.UserID)
 		return p, nil
 	}
@@ -69,6 +74,7 @@ func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
 	return types.JoinJamRequestParams{}, err
 }
 
+// ParseUpload func
 func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 
 	infile, _, err := r.FormFile("audioFile")
@@ -103,6 +109,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	return p, err
 }
 
+// GeneratePin func
 func GeneratePin(max int) string {
 	var table = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 	b := make([]byte, max)
