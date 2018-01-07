@@ -104,6 +104,7 @@ func (u user) Activity(userID string) ([]types.JamResponse, error) {
 			Location:      jm.Location,
 			Notes:         jm.Notes,
 			Collaborators: count,
+			Link:          jm.Link,
 		}
 		response = append(response, resp)
 	}

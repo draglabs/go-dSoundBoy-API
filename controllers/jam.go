@@ -106,6 +106,7 @@ func (j jam) Update(p types.UpdateJamRequestParams) (types.JamResponse, error) {
 		StartTime: jam.StartTime,
 		Location:  jam.Location,
 		Notes:     jam.Notes,
+		Link:      jam.Link,
 	}, err
 }
 

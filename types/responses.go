@@ -1,5 +1,7 @@
 package types
 
+// JamResponse struct is the a light
+// struct of the jam object
 type JamResponse struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
@@ -8,6 +10,7 @@ type JamResponse struct {
 	Location      string `json:"location"`
 	Notes         string `json:"notes"`
 	Collaborators int    `json:"collaborators"`
+	Link          string `json:"link"`
 }
 
 type UserResponse struct {
