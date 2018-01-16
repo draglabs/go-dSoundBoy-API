@@ -11,6 +11,7 @@ type JamResponse struct {
 	Notes         string `json:"notes"`
 	Collaborators int    `json:"collaborators"`
 	Link          string `json:"link"`
+	Pin           string `json:"pin"`
 }
 
 type UserResponse struct {

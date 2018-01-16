@@ -82,6 +82,7 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 			StartTime: jm.StartTime,
 			Location:  jm.Location,
 			Notes:     jm.Notes,
+			Pin:       jm.Pin,
 		}, nil
 	}
 	return types.JamResponse{}, errors.New("unable to join")
