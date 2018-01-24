@@ -65,7 +65,8 @@ func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Par
 func (j *JamRouter) upload(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	para, err := utils.ParseUpload(r)
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Something when wrong"})
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Something went wrong"})
 		return
 	}
 	err = controllers.Jam.Upload(para)

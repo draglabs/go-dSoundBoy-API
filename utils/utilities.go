@@ -80,7 +80,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	infile, _, err := r.FormFile("audioFile")
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("in file error", err)
 		return types.UploadJamParams{}, err
 	}
 	userID := r.FormValue("user_id") // replaced for now., should come on the header.
@@ -97,7 +97,7 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 	}
 	outfile, err := os.Create(".uploads/" + jamID)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("outfile error", err)
 		return types.UploadJamParams{}, err
 	}
 
