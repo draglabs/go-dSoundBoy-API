@@ -4,67 +4,59 @@ import (
 	"dsound/controllers"
 	"dsound/types"
 	"dsound/utils"
-	"encoding/json"
-	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
 )
 
 const (
-	userBaseRoute = APIV + "user"
-	register      = userBaseRoute + "/register"
-	activity      = userBaseRoute + "/activity"
-	activeJam     = userBaseRoute + "/jam/active"
-	update        = userBaseRoute + "/update"
+	userBaseRoute = APIV + "user/"
+	register      = userBaseRoute + "register"
+	activity      = userBaseRoute + "activity"
+	activeJam     = userBaseRoute + "jam/active"
+	update        = userBaseRoute + "update"
 )
 
-type UserRouter struct {
+//var userRouter = MainRouter.Group("/user/")
+var ur = MainRouter.Group(userBaseRoute)
+
+func addUserRoutes() {
+	ur.POST(register, registerUser)
+	ur.GET(activeJam, userActiveJam)
+	ur.GET(activity, userActivity)
+	ur.PUT(update, updateUser)
 }
 
-func NewUserRouter() UserRouter {
-	return UserRouter{}
-}
-func (ur *UserRouter) AddUserRoutes(r *httprouter.Router) {
-	r.POST(register, setContentTypeJSON(ur.register))
-	r.GET(activeJam, setContentTypeJSON(ur.activeJam))
-	r.GET(activity, setContentTypeJSON(ur.activity))
-	r.PUT(update, setContentTypeJSON(ur.update))
-}
-func (ur *UserRouter) register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pa, err := utils.ParseCreateUser(r)
+func registerUser(c *gin.Context) {
+	pa, err := utils.ParseCreateUser(c)
 	if err == nil {
 		usr, _ := controllers.User.Register(pa)
-		json.NewEncoder(w).Encode(usr)
-		return
+		c.JSON(200, usr)
 	}
 
 }
 
-func (ur *UserRouter) activeJam(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pa := utils.ParseUserID(r)
+func userActiveJam(c *gin.Context) {
+	pa := utils.ParseUserID(c)
 	jam, err := controllers.User.ActiveJam(pa)
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Cant Find Active Jam"})
-		return
+		c.JSON(500, types.ResponseMessage{M: "Cant Find Active Jam"})
 	}
-	json.NewEncoder(w).Encode(jam)
-}
-func (ur *UserRouter) activity(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
-	jams, err := controllers.User.Activity(utils.ParseUserID(r))
-	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to find user activity"})
-		return
-	}
-
-	json.NewEncoder(w).Encode(jams)
+	c.JSON(200, jam)
 }
 
-func (ur *UserRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	user, err := controllers.User.Update(utils.ParseUserID(r))
+func userActivity(c *gin.Context) {
+
+	jams, err := controllers.User.Activity(utils.ParseUserID(c))
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to update user error: " + err.Error()})
-		return
+		c.JSON(500, types.ResponseMessage{M: "Unable to find user activity"})
 	}
-	json.NewEncoder(w).Encode(user)
+	c.JSON(200, jams)
+}
+
+func updateUser(c *gin.Context) {
+	user, err := controllers.User.Update(utils.ParseUserID(c))
+	if err != nil {
+		c.JSON(500, types.ResponseMessage{M: "Unable to update user error: " + err.Error()})
+	}
+	c.JSON(200, user)
 }

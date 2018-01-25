@@ -111,6 +111,9 @@ func (u user) Activity(userID string) ([]types.JamResponse, error) {
 	return response, nil
 }
 
+func extractJamFromCollaboration() {
+
+}
 func (u user) ActiveJam(useID string) (models.Jam, error) {
 	var jam models.Jam
 	db := db.NewDB()

@@ -3,90 +3,74 @@ package utils
 import (
 	"crypto/rand"
 	"dsound/types"
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ParseJam func, parses the incoming
 // params from the create a new jam request
-func ParseJam(r *http.Request) (types.JamRequestParams, error) {
+func ParseJam(c *gin.Context) (types.JamRequestParams, error) {
 	var p types.JamRequestParams
-	userID := r.Header.Get("user_id")
-	err := json.NewDecoder(r.Body).Decode(&p)
-	defer r.Body.Close()
+	userID := c.GetHeader("user_id")
+	err := c.Bind(&p)
 	if err == nil {
 		p.UserID = userID
 		return p, nil
 	}
-	fmt.Println(err)
 	return p, err
 }
 
 // ParseUpdate func
-func ParseUpdate(r *http.Request) (types.UpdateJamRequestParams, error) {
+func ParseUpdate(c *gin.Context) (types.UpdateJamRequestParams, error) {
 	var p types.UpdateJamRequestParams
-
-	err := json.NewDecoder(r.Body).Decode(&p)
-
-	defer r.Body.Close()
-	if err == nil {
-		return p, nil
-	}
-	fmt.Println(err)
+	err := c.Bind(&p)
 	return p, err
 }
 
 // ParseCreateUser func, parses the incoming
 // params from create a new user request
-func ParseCreateUser(r *http.Request) (types.CreateUserParams, error) {
+func ParseCreateUser(c *gin.Context) (types.CreateUserParams, error) {
 	var p types.CreateUserParams
 
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	err = json.Unmarshal(b, &p)
-
+	err := c.Bind(&p)
 	return p, err
 }
 
 // ParseUserID func
-func ParseUserID(r *http.Request) string {
-	id := r.Header.Get("user_id")
+func ParseUserID(c *gin.Context) string {
+	id := c.GetHeader("user_id")
 	return id
-
 }
 
 // ParseJoinJam func
-func ParseJoinJam(r *http.Request) (types.JoinJamRequestParams, error) {
+func ParseJoinJam(c *gin.Context) (types.JoinJamRequestParams, error) {
 	var p types.JoinJamRequestParams
 	//userId := r.Header.Get("user_id")
-	err := json.NewDecoder(r.Body).Decode(&p)
-	defer r.Body.Close()
-	if err == nil {
-		// p.UserID = userId
-		fmt.Println("User id :", p.UserID)
-		return p, nil
-	}
-
-	return types.JoinJamRequestParams{}, err
+	err := c.Bind(&p)
+	return p, err
 }
 
 // ParseUpload func
-func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
+func ParseUpload(c *gin.Context) (types.UploadJamParams, error) {
 
-	infile, _, err := r.FormFile("audioFile")
-
+	// infile, _, err := r.FormFile("audioFile")
+	infile, err := c.FormFile("audioFile")
 	if err != nil {
 		fmt.Println("in file error", err)
 		return types.UploadJamParams{}, err
 	}
-	userID := r.FormValue("user_id") // replaced for now., should come on the header.
-	jamID := r.FormValue("id")
-	startTime := r.FormValue("start_time")
-	endTime := r.FormValue("end_time")
+	// userID := r.FormValue("user_id") // replaced for now., should come on the header.
+	// jamID := r.FormValue("id")
+	// startTime := r.FormValue("start_time")
+	// endTime := r.FormValue("end_time")
+
+	userID := c.PostForm("user_id")
+	jamID := c.PostForm("id")
+	startTime := c.PostForm("start_time")
+	endTime := c.PostForm("end_time")
 
 	p := types.UploadJamParams{
 		UserID:      userID,
@@ -100,8 +84,8 @@ func ParseUpload(r *http.Request) (types.UploadJamParams, error) {
 		fmt.Println("outfile error", err)
 		return types.UploadJamParams{}, err
 	}
-
-	_, err = io.Copy(outfile, infile)
+	fl, _ := infile.Open()
+	_, err = io.Copy(outfile, fl)
 	if err != nil {
 		fmt.Println(err)
 		return types.UploadJamParams{}, err

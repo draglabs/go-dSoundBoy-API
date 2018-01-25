@@ -4,116 +4,97 @@ import (
 	"dsound/controllers"
 	"dsound/types"
 	"dsound/utils"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
 )
 
 //JamRouter struct, is the jam router
-type JamRouter struct {
-}
+var jamRouter = MainRouter.Group(jamR)
 
 const (
-	jamR        = APIV + "jam"
-	recordingsR = jamR + "/recording/:id"
-	jamNewR     = jamR + "/new"
-	joinR       = jamR + "/join"
-	upload      = jamR + "/upload"
-	details     = jamR + "/details/:id"
-	updateJam   = jamR + "/update"
+	jamR        = APIV + "jam/"
+	recordingsR = jamR + "recording/:id"
+	jamNewR     = jamR + "new"
+	joinR       = jamR + "join"
+	upload      = jamR + "upload"
+	details     = jamR + "details/:id"
+	updateJamR  = jamR + "update"
 )
-
-//NewJamRouter func, gives us a new JamRouter
-func NewJamRouter() JamRouter {
-	return JamRouter{}
-}
 
 // addToMainROuter func, will add all the jam routes
 // to he main router
-func (j *JamRouter) addToMainRouter(r *httprouter.Router) {
-	r.GET(recordingsR, setContentTypeJSON(j.recordings))
-	r.GET(details, setContentTypeJSON(j.details))
-	r.POST(jamNewR, setContentTypeJSON(j.new))
-	r.POST(joinR, setContentTypeJSON(j.join))
-	r.POST(upload, j.upload)
-	r.POST(updateJam, setContentTypeJSON(j.update))
+func addToMainRouter() {
+	jamRouter.GET(recordingsR, recordings)
+	jamRouter.GET(details, jamDetails)
+	jamRouter.POST(jamNewR, newJam)
+	jamRouter.POST(joinR, join)
+	jamRouter.POST(upload, uploadAudioFile)
+	jamRouter.POST(updateJamR, updateJam)
 }
 
 // new func, will give us a new jam regarless of the user having an
 // active jam, if the user has an active jam it will be replaced by this one
-func (j *JamRouter) new(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pm, err := utils.ParseJam(r)
+func newJam(c *gin.Context) {
+	pm, err := utils.ParseJam(c)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "One or more params are missing"})
-		return
+		c.JSON(400, types.ResponseMessage{M: "One or more params are missing"})
 	}
 	jam, err := controllers.Jam.Create(pm)
 	if err == nil {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(jam)
-		return
+		c.JSON(200, jam)
 	}
-	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(types.ResponseMessage{M: "Unable to create Jam"})
+	c.JSON(500, types.ResponseMessage{M: "Unable to create Jam"})
 }
 
 // upload func, takes care of the uplaoding, and currently uploads the file to
 // s3 bucket.
-func (j *JamRouter) upload(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	para, err := utils.ParseUpload(r)
+func uploadAudioFile(c *gin.Context) {
+	para, err := utils.ParseUpload(c)
 	if err != nil {
-		w.WriteHeader(500)
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "Something went wrong"})
-		return
+		c.JSON(500, types.ResponseMessage{M: "Something went wrong"})
 	}
 	err = controllers.Jam.Upload(para)
 	if err == nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "uploaded succesfuly"})
+		c.JSON(200, types.ResponseMessage{M: "uploaded succesfuly"})
 	}
 }
 
 // join func, join a user into a jam.
-func (j *JamRouter) join(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	para, err := utils.ParseJoinJam(r)
+func join(c *gin.Context) {
+	para, err := utils.ParseJoinJam(c)
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "One or more params are missing"})
-		return
+		c.JSON(500, types.ResponseMessage{M: "One or more params are missing"})
 	}
 	if jam, err := controllers.Jam.Join(para); err == nil {
-		json.NewEncoder(w).Encode(jam)
+		c.JSON(200, jam)
 	}
 }
 
-func (j *JamRouter) details(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	jam, err := controllers.Jam.Details(p.ByName("id"))
-	if err == nil {
-		json.NewEncoder(w).Encode(jam)
-		return
+func jamDetails(c *gin.Context) {
+	jam, err := controllers.Jam.Details(c.Param("id"))
+	if err != nil {
+		c.JSON(500, types.ResponseMessage{M: "Something when wrong, Error: " + err.Error()})
 	}
-	json.NewEncoder(w).Encode(types.ResponseMessage{M: "Something when wrong, Error: " + err.Error()})
+	c.JSON(200, jam)
 
 }
 
 // recordings func, will fetch all the recordings for a given jam id.
-func (j *JamRouter) recordings(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id := p.ByName("id")
+func recordings(c *gin.Context) {
+	id := c.Param("id")
 	recordings, err := controllers.Recordings(id)
 	if err != nil {
-		json.NewEncoder(w).Encode(types.ResponseMessage{M: "No recordings for this jam " + id})
-		return
+		c.JSON(400, types.ResponseMessage{M: "No recordings for this jam " + id})
 	}
-	json.NewEncoder(w).Encode(recordings)
+	c.JSON(200, recordings)
 }
-func (j *JamRouter) update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	para, err := utils.ParseUpdate(r)
-	fmt.Println("error parsing update", err)
-	fmt.Println(para.ID)
+func updateJam(c *gin.Context) {
+	para, err := utils.ParseUpdate(c)
 	jam, err := controllers.Jam.Update(para)
-	fmt.Println(err)
+	if err != nil {
+		c.JSON(500, types.ResponseMessage{M: "something went wrong" + err.Error()})
+	}
 	if err == nil {
-		json.NewEncoder(w).Encode(jam)
+		c.JSON(200, jam)
 	}
 }
