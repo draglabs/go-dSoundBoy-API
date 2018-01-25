@@ -37,10 +37,12 @@ func newJam(c *gin.Context) {
 	pm, err := utils.ParseJam(c)
 	if err != nil {
 		c.JSON(400, types.ResponseMessage{M: "One or more params are missing"})
+		return
 	}
 	jam, err := controllers.Jam.Create(pm)
 	if err == nil {
 		c.JSON(200, jam)
+		return
 	}
 	c.JSON(500, types.ResponseMessage{M: "Unable to create Jam"})
 }
@@ -51,10 +53,12 @@ func uploadAudioFile(c *gin.Context) {
 	para, err := utils.ParseUpload(c)
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "Something went wrong"})
+		return
 	}
 	err = controllers.Jam.Upload(para)
 	if err == nil {
 		c.JSON(200, types.ResponseMessage{M: "uploaded succesfuly"})
+		return
 	}
 }
 
@@ -63,9 +67,11 @@ func join(c *gin.Context) {
 	para, err := utils.ParseJoinJam(c)
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "One or more params are missing"})
+		return
 	}
 	if jam, err := controllers.Jam.Join(para); err == nil {
 		c.JSON(200, jam)
+		return
 	}
 }
 
@@ -73,6 +79,7 @@ func jamDetails(c *gin.Context) {
 	jam, err := controllers.Jam.Details(c.Param("id"))
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "Something when wrong, Error: " + err.Error()})
+		return
 	}
 	c.JSON(200, jam)
 
@@ -84,6 +91,7 @@ func recordings(c *gin.Context) {
 	recordings, err := controllers.Recordings(id)
 	if err != nil {
 		c.JSON(400, types.ResponseMessage{M: "No recordings for this jam " + id})
+		return
 	}
 	c.JSON(200, recordings)
 }
@@ -92,6 +100,7 @@ func updateJam(c *gin.Context) {
 	jam, err := controllers.Jam.Update(para)
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "something went wrong" + err.Error()})
+		return
 	}
 	if err == nil {
 		c.JSON(200, jam)

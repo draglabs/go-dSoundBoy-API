@@ -4,7 +4,7 @@ package types
 // on what the params from creating  a new jam
 // are modeled into
 type JamRequestParams struct {
-	UserID   string  `form:"user_id"`
+	UserID   string  `form:"user_id,omitempty"`
 	Name     string  `form:"name"`
 	Location string  `form:"location"`
 	Lat      float64 `form:"lat,omitempty"`

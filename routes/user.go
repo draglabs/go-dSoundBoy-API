@@ -39,6 +39,7 @@ func userActiveJam(c *gin.Context) {
 	jam, err := controllers.User.ActiveJam(pa)
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "Cant Find Active Jam"})
+		return
 	}
 	c.JSON(200, jam)
 }
@@ -48,6 +49,7 @@ func userActivity(c *gin.Context) {
 	jams, err := controllers.User.Activity(utils.ParseUserID(c))
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "Unable to find user activity"})
+		return
 	}
 	c.JSON(200, jams)
 }
@@ -56,6 +58,7 @@ func updateUser(c *gin.Context) {
 	user, err := controllers.User.Update(utils.ParseUserID(c))
 	if err != nil {
 		c.JSON(500, types.ResponseMessage{M: "Unable to update user error: " + err.Error()})
+		return
 	}
 	c.JSON(200, user)
 }
