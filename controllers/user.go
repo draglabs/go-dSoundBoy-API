@@ -5,7 +5,7 @@ import (
 	"dsound/models"
 	"dsound/types"
 	"dsound/vendor"
-	"log"
+	"fmt"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -78,7 +78,8 @@ func (u user) UpdateCurrentJam(userID string, jam models.Jam) error {
 
 	err := c.Update(bson.M{"_id": userID}, bson.M{"$set": bson.M{"current_jam": jam}})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("user active jam not found", err)
+		return err
 	}
 
 	return err
