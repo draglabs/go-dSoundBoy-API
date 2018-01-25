@@ -72,17 +72,24 @@ func ParseUpload(c *gin.Context) (types.UploadJamParams, error) {
 		JamID:       jamID,
 		StartTime:   startTime,
 		EndTime:     endTime,
-		TempFileURL: ".uploads/" + jamID,
+		TempFileURL: "temp/" + jamID,
 	}
-	outfile, err := os.Create(".uploads/" + jamID + ".caf")
+	tempPath := "temp"
+	if _, err := os.Stat(tempPath); os.IsNotExist(err) {
+		os.Mkdir(tempPath, 0700)
+	}
+	outfile, err := os.Create(tempPath + "/" + jamID)
+	//outfile, err := os.Create(".uploads/" + jamID)
+	//outfile, err := os.OpenFile(".uploads/"+jamID, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println("outfile error", err)
 		return types.UploadJamParams{}, err
 	}
+	fmt.Println("error after creating file", err)
 	fl, _ := infile.Open()
 	_, err = io.Copy(outfile, fl)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error on copying", err)
 		return types.UploadJamParams{}, err
 	}
 	return p, err
