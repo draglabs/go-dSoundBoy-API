@@ -53,6 +53,7 @@ func ParseJoinJam(c *gin.Context) (types.JoinJamRequestParams, error) {
 	if p.UserID == "" {
 		id := c.GetHeader("user_id")
 		p.UserID = id
+		fmt.Println("user id from join after header", p.UserID)
 	}
 	return p, err
 }
