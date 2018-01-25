@@ -72,7 +72,12 @@ func (j jam) Upload(p types.UploadJamParams) error {
 }
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 
-	if jm, err := findByPin(p.Pin); err == nil {
+	jm, err := findByPin(p.Pin)
+	if err != nil {
+		fmt.Println("jam not found with pin ", p.Pin)
+		return types.JamResponse{}, err
+	}
+	if err == nil {
 		User.UpdateCurrentJam(p.UserID, jm)
 		j.UpdateActiveJam(p.UserID)
 
