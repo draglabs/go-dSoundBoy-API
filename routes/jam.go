@@ -70,6 +70,7 @@ func join(c *gin.Context) {
 		c.JSON(500, types.ResponseMessage{M: "One or more params are missing"})
 		return
 	}
+
 	if jam, err := controllers.Jam.Join(para); err == nil {
 		c.JSON(200, jam)
 		return

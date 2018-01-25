@@ -74,8 +74,8 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 
 	if jm, err := findByPin(p.Pin); err == nil {
 		j.UpdateActiveJam(p.UserID)
-		go User.UpdateCurrentJam(p.UserID, jm)
-		go updateCollabators(jm.ID, p.UserID)
+		User.UpdateCurrentJam(p.UserID, jm)
+		updateCollabators(jm.ID, p.UserID)
 		return types.JamResponse{
 			ID:        jm.ID,
 			Name:      jm.Name,
@@ -143,10 +143,10 @@ func findByPin(pin string) (models.Jam, error) {
 	defer db.Close()
 	c := db.JamCollection()
 	err := c.Find(bson.M{"pin": pin}).One(&jm)
-	if err == nil {
-		return jm, nil
+	if err != nil {
+		return jm, err
 	}
-	return jm, err
+	return jm, nil
 }
 
 // Recordings func, will fetch all the recordings for a jam
