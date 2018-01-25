@@ -11,7 +11,7 @@ import (
 const (
 	register  = "register"
 	activity  = "activity"
-	activeJam = "jam/active"
+	activeJam = "jam/active/:id"
 	update    = "update"
 )
 
