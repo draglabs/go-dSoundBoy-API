@@ -55,17 +55,11 @@ func ParseJoinJam(c *gin.Context) (types.JoinJamRequestParams, error) {
 
 // ParseUpload func
 func ParseUpload(c *gin.Context) (types.UploadJamParams, error) {
-
-	// infile, _, err := r.FormFile("audioFile")
 	infile, err := c.FormFile("audioFile")
 	if err != nil {
 		fmt.Println("in file error", err)
 		return types.UploadJamParams{}, err
 	}
-	// userID := r.FormValue("user_id") // replaced for now., should come on the header.
-	// jamID := r.FormValue("id")
-	// startTime := r.FormValue("start_time")
-	// endTime := r.FormValue("end_time")
 
 	userID := c.PostForm("user_id")
 	jamID := c.PostForm("id")
@@ -73,13 +67,14 @@ func ParseUpload(c *gin.Context) (types.UploadJamParams, error) {
 	endTime := c.PostForm("end_time")
 
 	p := types.UploadJamParams{
+
 		UserID:      userID,
 		JamID:       jamID,
 		StartTime:   startTime,
 		EndTime:     endTime,
 		TempFileURL: ".uploads/" + jamID,
 	}
-	outfile, err := os.Create(".uploads/" + jamID)
+	outfile, err := os.Create(".uploads/" + jamID + ".caf")
 	if err != nil {
 		fmt.Println("outfile error", err)
 		return types.UploadJamParams{}, err
