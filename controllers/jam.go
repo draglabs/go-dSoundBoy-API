@@ -121,7 +121,9 @@ func (j jam) UpdateActiveJam(userID string) {
 	if err == nil {
 		err = db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false, "end_time": time.Now().String()}})
 	}
-
+	if err != nil {
+		fmt.Println("error updating active jam ", err)
+	}
 }
 
 // FindById finds a jam by id
@@ -168,7 +170,7 @@ func updateCollabators(jamID, userID string) {
 		collabs := jm.Collaborators
 		collabs = append(collabs, usr)
 		er := c.Update(bson.M{"_id": jamID}, bson.M{"$set": bson.M{"collaborators": collabs}})
-		fmt.Println(er)
+		fmt.Println("error updating collabators ", er)
 	}
 
 }

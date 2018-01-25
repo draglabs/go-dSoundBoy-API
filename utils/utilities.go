@@ -48,7 +48,6 @@ func ParseUserID(c *gin.Context) string {
 // ParseJoinJam func
 func ParseJoinJam(c *gin.Context) (types.JoinJamRequestParams, error) {
 	var p types.JoinJamRequestParams
-	//userId := r.Header.Get("user_id")
 	err := c.Bind(&p)
 	return p, err
 }

@@ -4,6 +4,7 @@ import (
 	"dsound/controllers"
 	"dsound/types"
 	"dsound/utils"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -67,6 +68,7 @@ func uploadAudioFile(c *gin.Context) {
 func join(c *gin.Context) {
 	para, err := utils.ParseJoinJam(c)
 	if err != nil {
+		fmt.Println("error parsing join jam " + err.Error())
 		c.JSON(500, types.ResponseMessage{M: "One or more params are missing"})
 		return
 	}
