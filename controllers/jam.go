@@ -68,7 +68,7 @@ func (j jam) Upload(p types.UploadJamParams) error {
 		S3url:     s3URL,
 	}
 	go createRecording(recording)
-	return nil
+	return err
 }
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 

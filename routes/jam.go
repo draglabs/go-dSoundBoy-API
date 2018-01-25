@@ -56,10 +56,11 @@ func uploadAudioFile(c *gin.Context) {
 		return
 	}
 	err = controllers.Jam.Upload(para)
-	if err == nil {
-		c.JSON(200, types.ResponseMessage{M: "uploaded succesfuly"})
+	if err != nil {
+		c.JSON(500, types.ResponseMessage{M: "Something went wrong"})
 		return
 	}
+	c.JSON(200, types.ResponseMessage{M: "uploaded succesfuly"})
 }
 
 // join func, join a user into a jam.
