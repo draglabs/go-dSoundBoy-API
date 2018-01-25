@@ -78,6 +78,7 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 		return types.JamResponse{}, err
 	}
 	if err == nil {
+		fmt.Println("jam found name:", jm.Name)
 		User.UpdateCurrentJam(p.UserID, jm)
 		j.UpdateActiveJam(p.UserID)
 
