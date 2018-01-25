@@ -73,8 +73,9 @@ func (j jam) Upload(p types.UploadJamParams) error {
 func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 
 	if jm, err := findByPin(p.Pin); err == nil {
-		j.UpdateActiveJam(p.UserID)
 		User.UpdateCurrentJam(p.UserID, jm)
+		j.UpdateActiveJam(p.UserID)
+
 		updateCollabators(jm.ID, p.UserID)
 		return types.JamResponse{
 			ID:        jm.ID,
@@ -113,17 +114,24 @@ func (j jam) Update(p types.UpdateJamRequestParams) (types.JamResponse, error) {
 
 // UpdateActiveJam updates the current jam from
 // being active to inactive.
-func (j jam) UpdateActiveJam(userID string) {
+func (j jam) UpdateActiveJam(userID string) error {
 	var activeJam models.Jam
 	db := db.NewDB()
 	defer db.Close()
 	err := db.JamCollection().Find(bson.M{"user_id": userID, "is_current": true}).One(&activeJam)
+	if err != nil {
+		fmt.Println("error finding jam")
+		return err
+	}
 	if err == nil {
 		err = db.JamCollection().Update(bson.M{"_id": activeJam.ID}, bson.M{"$set": bson.M{"is_current": false, "end_time": time.Now().String()}})
+		return err
 	}
 	if err != nil {
 		fmt.Println("error updating active jam ", err)
+		return err
 	}
+	return nil
 }
 
 // FindById finds a jam by id
