@@ -9,15 +9,14 @@ import (
 )
 
 const (
-	userBaseRoute = APIV + "user/"
-	register      = userBaseRoute + "register"
-	activity      = userBaseRoute + "activity"
-	activeJam     = userBaseRoute + "jam/active"
-	update        = userBaseRoute + "update"
+	register  = "register"
+	activity  = "activity"
+	activeJam = "jam/active"
+	update    = "update"
 )
 
 //var userRouter = MainRouter.Group("/user/")
-var ur = MainRouter.Group(userBaseRoute)
+var ur = MainRouter.Group(APIV + "user/")
 
 func addUserRoutes() {
 	ur.POST(register, registerUser)

@@ -9,16 +9,15 @@ import (
 )
 
 //JamRouter struct, is the jam router
-var jamRouter = MainRouter.Group(jamR)
+var jamRouter = MainRouter.Group(APIV + "jam/")
 
 const (
-	jamR        = APIV + "jam/"
-	recordingsR = jamR + "recording/:id"
-	jamNewR     = jamR + "new"
-	joinR       = jamR + "join"
-	upload      = jamR + "upload"
-	details     = jamR + "details/:id"
-	updateJamR  = jamR + "update"
+	recordingsR = "recording/:id"
+	jamNewR     = "new"
+	joinR       = "join"
+	upload      = "upload"
+	details     = "details/:id"
+	updateJamR  = "update"
 )
 
 // addToMainROuter func, will add all the jam routes
