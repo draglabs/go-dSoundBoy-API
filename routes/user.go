@@ -33,6 +33,7 @@ func registerUser(c *gin.Context) {
 			c.JSON(200, usr)
 			return
 		}
+		return
 	}
 	c.JSON(403, gin.H{"message": "error registering user. Error: " + err.Error()})
 }
