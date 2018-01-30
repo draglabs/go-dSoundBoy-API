@@ -120,7 +120,7 @@ func (u user) ActiveJam(useID string) (models.Jam, error) {
 	db := db.NewDB()
 	defer db.Close()
 	jc := db.JamCollection()
-	err := jc.Find(bson.M{"user_id": useID, "current": true}).One(&jam)
+	err := jc.Find(bson.M{"user_id": useID, "is_current": true}).One(&jam)
 	return jam, err
 
 }
