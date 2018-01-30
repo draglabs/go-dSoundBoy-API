@@ -28,12 +28,14 @@ func addUserRoutes() {
 func registerUser(c *gin.Context) {
 	pa, err := utils.ParseCreateUser(c)
 	if err == nil {
-		usr, _ := controllers.User.Register(pa)
-		c.JSON(200, usr)
+		usr, err := controllers.User.Register(pa)
+		if err == nil {
+			c.JSON(200, usr)
+			return
+		}
 	}
-
+	c.JSON(403, gin.H{"message": "error registering user. Error: " + err.Error()})
 }
-
 func userActiveJam(c *gin.Context) {
 	pa := utils.ParseUserID(c)
 	jam, err := controllers.User.ActiveJam(pa)
