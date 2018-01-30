@@ -35,7 +35,7 @@ func ParseUpdate(c *gin.Context) (types.UpdateJamRequestParams, error) {
 func ParseCreateUser(c *gin.Context) (types.CreateUserParams, error) {
 	var p types.CreateUserParams
 
-	err := c.Bind(&p)
+	err := c.BindJSON(&p)
 	return p, err
 }
 

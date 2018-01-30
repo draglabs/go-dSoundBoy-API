@@ -42,8 +42,8 @@ type UploadJamParams struct {
 // on what the params from registering a user
 // are modeled into
 type CreateUserParams struct {
-	FBID        string `form:"facebook_id"`
-	AccessToken string `form:"access_token"`
+	FBID        string `json:"facebook_id"`
+	AccessToken string `json:"access_token"`
 }
 type UpdateUserParams struct {
 	Email string `form:"email"`
