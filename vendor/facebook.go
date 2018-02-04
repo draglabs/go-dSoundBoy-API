@@ -24,16 +24,23 @@ func FBFetchUser(para types.CreateUserParams) (models.User, error) {
 		var firstName string
 		var lastName string
 		var fbEmail string
+		noEmail := false
 		resp.DecodeField("first_name", &firstName)
 		resp.DecodeField("last_name", &lastName)
 		resp.DecodeField("email", &fbEmail)
 
+		if fbEmail == "" {
+			fbEmail = "accountcreationerror@draglabs.com"
+			noEmail = true
+		}
+
 		user := models.User{
-			ID:        bson.NewObjectId().Hex(),
-			FirstName: firstName,
-			LastName:  lastName,
-			FBID:      fbUserID,
-			FBEmail:   fbEmail,
+			ID:                bson.NewObjectId().Hex(),
+			FirstName:         firstName,
+			LastName:          lastName,
+			FBID:              fbUserID,
+			FBEmail:           fbEmail,
+			HasTemporaryEmail: noEmail,
 		}
 		return user, nil
 	}

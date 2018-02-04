@@ -44,6 +44,13 @@ func ParseUserID(c *gin.Context) string {
 	id := c.GetHeader("user_id")
 	return id
 }
+func ParseUpdateUser(c *gin.Context) (types.UpdateUserParams, error) {
+	var p types.UpdateUserParams
+	err := c.BindJSON(&p)
+
+	return p, err
+
+}
 
 // ParseJoinJam func
 func ParseJoinJam(c *gin.Context) (types.JoinJamRequestParams, error) {
