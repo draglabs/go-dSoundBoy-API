@@ -12,7 +12,7 @@ type JamResponse struct {
 	Collaborators int       `json:"collaborators"`
 	Link          string    `json:"link"`
 	Pin           string    `json:"pin"`
-	Coordinates   []float64 `json:"coordinates`
+	Coordinates   []float64 `json:"coordinates"`
 }
 
 type UserResponse struct {
