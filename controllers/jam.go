@@ -82,7 +82,7 @@ func (j jam) Join(p types.JoinJamRequestParams) (types.JamResponse, error) {
 		User.UpdateCurrentJam(p.UserID, jm)
 		j.UpdateActiveJam(p.UserID)
 
-		updateCollabators(jm.ID, p.UserID)
+		updateCollaborators(jm.ID, p.UserID)
 		return types.JamResponse{
 			ID:        jm.ID,
 			Name:      jm.Name,
@@ -174,7 +174,7 @@ func Recordings(jamID string) ([]models.Recordings, error) {
 	return recordings, err
 }
 
-func updateCollabators(jamID, userID string) {
+func updateCollaborators(jamID, userID string) {
 	var jm models.Jam
 	db := db.NewDB()
 	defer db.Close()

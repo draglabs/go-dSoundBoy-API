@@ -6,7 +6,7 @@ type JamResponse struct {
 	ID            string    `json:"id"`
 	Name          string    `json:"name"`
 	StartTime     string    `json:"start_time"`
-	EndtTime      string    `json:"end_time"`
+	EndTime       string    `json:"end_time"`
 	Location      string    `json:"location"`
 	Notes         string    `json:"notes"`
 	Collaborators int       `json:"collaborators"`
