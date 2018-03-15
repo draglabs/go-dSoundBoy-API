@@ -61,7 +61,7 @@ func uploadAudioFile(c *gin.Context) {
 		c.JSON(500, types.ResponseMessage{M: "Something went wrong"})
 		return
 	}
-	c.JSON(200, types.ResponseMessage{M: "uploaded succesfuly"})
+	c.JSON(200, types.ResponseMessage{M: "uploaded successfully"})
 }
 
 // join func, join a user into a jam.

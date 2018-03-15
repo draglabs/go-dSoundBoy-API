@@ -13,7 +13,7 @@ const (
 	s3region = "us-west-1"
 )
 
-// UploadToS3 func, uploads a recording to s3
+// UploadToS3 func, uploads a recording to S3
 // once ge a response from the server then
 func UploadToS3(filepath string, userID, key string) (string, error) {
 
