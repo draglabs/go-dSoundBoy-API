@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"dsound/controllers"
-	"dsound/types"
-	"dsound/utils"
+	"github.com/draglabs/go-dSoundBoy-API/controllers"
+	"github.com/draglabs/go-dSoundBoy-API/types"
+	"github.com/draglabs/go-dSoundBoy-API/utils"
 
 	"github.com/gin-gonic/gin"
 )

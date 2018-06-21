@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"dsound/controllers"
-	"dsound/types"
-	"dsound/utils"
+	"github.com/draglabs/go-dSoundBoy-API/controllers"
+	"github.com/draglabs/go-dSoundBoy-API/types"
+	"github.com/draglabs/go-dSoundBoy-API/utils"
+
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -48,7 +49,7 @@ func newJam(c *gin.Context) {
 	c.JSON(500, types.ResponseMessage{M: "Unable to create Jam"})
 }
 
-// upload func, takes care of the uplaoding, and currently uploads the file to
+// upload func, takes care of the uploading, and currently uploads the file to
 // s3 bucket.
 func uploadAudioFile(c *gin.Context) {
 	para, err := utils.ParseUpload(c)

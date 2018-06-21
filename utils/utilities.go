@@ -2,7 +2,7 @@ package utils
 
 import (
 	"crypto/rand"
-	"dsound/types"
+	"github.com/draglabs/go-dSoundBoy-API/types"
 	"fmt"
 	"io"
 	"os"

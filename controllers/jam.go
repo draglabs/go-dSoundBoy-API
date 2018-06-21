@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"dsound/db"
-	"dsound/models"
-	"dsound/types"
-	"dsound/utils"
-	"dsound/vendor"
+	"github.com/draglabs/go-dSoundBoy-API/db"
+	"github.com/draglabs/go-dSoundBoy-API/models"
+	"github.com/draglabs/go-dSoundBoy-API/types"
+	"github.com/draglabs/go-dSoundBoy-API/utils"
+	"github.com/draglabs/go-dSoundBoy-API/vendor"
 	"errors"
 	"fmt"
 	"time"

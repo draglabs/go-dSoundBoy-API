@@ -1,8 +1,8 @@
 package vendor
 
 import (
-	"dsound/models"
-	"dsound/types"
+	"github.com/draglabs/go-dSoundBoy-API/models"
+	"github.com/draglabs/go-dSoundBoy-API/types"
 
 	fb "github.com/huandu/facebook"
 	"gopkg.in/mgo.v2/bson"

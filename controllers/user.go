@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"dsound/db"
-	"dsound/models"
-	"dsound/types"
-	"dsound/vendor"
+	"github.com/draglabs/go-dSoundBoy-API/db"
+	"github.com/draglabs/go-dSoundBoy-API/models"
+	"github.com/draglabs/go-dSoundBoy-API/types"
+	"github.com/draglabs/go-dSoundBoy-API/vendor"
+
 	"fmt"
 
 	"gopkg.in/mgo.v2/bson"
@@ -101,7 +102,7 @@ func (u user) Activity(userID string) ([]types.JamResponse, error) {
 			ID:            jm.ID,
 			Name:          jm.Name,
 			StartTime:     jm.StartTime,
-			EndtTime:      jm.EndTime,
+			EndTime:      jm.EndTime,
 			Location:      jm.Location,
 			Notes:         jm.Notes,
 			Collaborators: count,
